@@ -1,0 +1,63 @@
+#!/bin/sh
+
+SESSIONBAK="/home/$(whoami)/.hoard_sessions"
+#export HOARD_SESSIONS=$SESSIONBAK
+
+if [[ -z "$1" || "$1" =~ ^(-*)h(elp|)$ ]]
+then
+    echo "Usage: hoard COMMAND"
+    echo "Simple terminal session manager."
+    echo
+    echo "COMMANDS:"
+    echo "  ls - List all saved hoard sessions"
+    echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
+    echo "  d [NUMBER] - Delete hoard session [NUMBER]"
+    echo "  s - Save current directory as a hoard session"
+    echo
+else
+    #echo $1 $2
+    case $1 in
+        "ls")
+            echo "listing saved sessions"
+            #cat $SESSIONBAK
+            i=1
+            while IFS= read -r line; do
+                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\1/p')
+                session=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\2/p')
+                echo "    $i: $timestamp $(echo "$session" | tail -c 40)"
+                let "i++"
+            done < "$SESSIONBAK"
+        ;;
+
+        "a")
+            line=$(cat $SESSIONBAK | sed -n "$2p")
+            echo "attaching $line"
+            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+            session=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\2/p')
+            echo $session
+            cd "$session"
+
+            sed -i "$2d" $SESSIONBAK
+        ;;
+
+        "d")
+            line=$(cat $SESSIONBAK | sed -n "$2p")
+            echo "deleting $line"
+            sed -i "$2d" $SESSIONBAK
+        ;;
+
+        "s")
+            line="[$(date +"%x %X")] $(pwd)"
+            echo "saving $line"
+            echo "$line" >> $SESSIONBAK
+        ;;
+    esac
+fi
+
+#copy the section below into your .bashrc and uncomment to turn on auto save
+#finish() {
+#    hoard s
+#}
+#
+#trap finish EXIT
+
