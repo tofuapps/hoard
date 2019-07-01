@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+echo "We'll be uninstalling hoard (/usr/local/bin/hoard) and all related files. [ctrl-c to cancel]"
+sleep 3
+
+(rm /usr/local/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at /usr/local/bin/hoard")
+
+file=
+if [ -f "$HOME/.bashrc" ]; then
+    file="$HOME/.bashrc"
+elif [ -f "$HOME/.bash_profile" ]; then
+    file="$HOME/.bash_profile"
+fi
+
+rm ~/.hoard_sessions >> /dev/null 2>&1
+
+if [[ -z "$file" ]]; then
+    echo "We've removed everything related to hoard."
+    echo "However, please remove '. hoard' from your .bashrc file or equivalent if you added that manually."
+else
+    sed -i '' "/\. hoard$/g" "$file"
+    echo "We've removed everything related to 'hoard',"
+    echo "and it should not be usable in subsequent terminal sessions."
+fi

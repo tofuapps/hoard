@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [ -f "/usr/local/bin/hoard" ]; then
+    echo "We'll be updating the installation of hoard at /usr/local/bin/hoard. [ctrl-c to cancel]"
+    sleep 3
+    rm /usr/local/bin/hoard
+fi
+
+(ln `dirname "$0"`/hoard /usr/local/bin/hoard && echo "Installed 'hoard' at /usr/local/bin/hoard") || (echo "Installation failure" && exit 1)
+
+file=
+if [ -f "$HOME/.bashrc" ]; then
+    file="$HOME/.bashrc"
+elif [ -f "$HOME/.bash_profile" ]; then
+    file="$HOME/.bash_profile"
+fi
+
+if [[ -z "$file" ]]; then
+    echo "Please add '. hoard' to your .bashrc file or equivalent to use the 'hoard' command directly on every new terminal session."
+    echo "Otherwise, you should run the hoard command '. hoard' to use the command 'hoard'."
+else
+    sed -i '' "/\. hoard$/g" "$file"
+    echo ". hoard" >> "$file"
+    echo "Successfully sourced 'hoard', so that you can use 'hoard' directly in every new terminal session."
+    . hoard
+    echo
+    echo "You can now use the command 'hoard' immediately."
+fi
