@@ -5,9 +5,7 @@ if [ "$(uname)" == "Darwin" ]; then
     INSTALL_DIR="/usr/local"
 fi
 
-if [ ! -f "$INSTALL_DIR/bin" ]; then
-    mkdir "$INSTALL_DIR/bin"
-fi
+mkdir "$INSTALL_DIR/bin/" >> /dev/null 2>&1
 
 if [ -f "$INSTALL_DIR/bin/hoard" ]; then
     echo "We'll be updating the installation of hoard at $INSTALL_DIR/bin/hoard. [ctrl-c to cancel]"
