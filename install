@@ -27,7 +27,7 @@ else
     sed -i '' "/\. hoard$/g" "$file"
     echo ". hoard" >> "$file"
     echo "Successfully sourced 'hoard', so that you can use 'hoard' directly in every new terminal session."
-    . hoard
     echo
-    echo "You can now use the command 'hoard' immediately."
+    echo "Restart your terminal or run 'source hoard', then"
+    echo "you'll be able to use the command 'hoard'."
 fi

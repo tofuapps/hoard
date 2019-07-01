@@ -12,7 +12,7 @@ then
     #file is sourced
     echo -n 
 else
-    echo "This tool can only be ran when sourced. See README.md for more info, or run the ./install script if you haven't installed.";
+    echo "This tool can only be ran after it's sourced. Try running 'source hoard' before running 'hoard'.";
 fi
 ###########################################
 
