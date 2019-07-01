@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-INSTALL_DIR="$HOME/bin"
+INSTALL_DIR="$HOME"
 if [ "$(uname)" == "Darwin" ]; then
     INSTALL_DIR="/usr/local"
 fi
@@ -23,7 +23,11 @@ if [[ -z "$file" ]]; then
     echo "We've removed everything related to hoard."
     echo "However, please remove '. hoard' from your .bashrc file or equivalent if you added that manually."
 else
-    sed -i '' "/\. hoard$/g" "$file"
+    if [ "$(uname)" == "Darwin" ]; then
+        sed -i '' "/\. hoard$/g" "$file"
+    else 
+        sed -i "/\. hoard$/g" "$file"
+    fi
     echo "We've removed everything related to 'hoard',"
     echo "and it should not be usable in subsequent terminal sessions."
 fi

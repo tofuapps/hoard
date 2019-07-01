@@ -120,14 +120,22 @@ hoard() {
                 session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
                 echo $session
                 cd "$session"
-
-                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                
+                if [ "$(uname)" == "Darwin" ]; then
+                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                else
+                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                fi
                 ;;
 
             "d")
                 line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
                 echo "deleting $line"
-                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                if [ "$(uname)" == "Darwin" ]; then
+                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                else
+                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                fi
                 ;;
 
             "s")
