@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
-echo "We'll be uninstalling hoard (/usr/local/bin/hoard) and all related files. [ctrl-c to cancel]"
+INSTALL_DIR="$HOME/bin"
+if [ "$(uname)" == "Darwin" ]; then
+    INSTALL_DIR="/usr/local"
+fi
+
+echo "We'll be uninstalling hoard ($INSTALL_DIR/bin/hoard) and all related files. [ctrl-c to cancel]"
 sleep 3
 
-(rm /usr/local/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at /usr/local/bin/hoard")
+(rm $INSTALL_DIR/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at $INSTALL_DIR/bin/hoard")
 
 file=
 if [ -f "$HOME/.bashrc" ]; then

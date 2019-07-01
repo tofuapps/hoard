@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
-if [ -f "/usr/local/bin/hoard" ]; then
-    echo "We'll be updating the installation of hoard at /usr/local/bin/hoard. [ctrl-c to cancel]"
-    sleep 3
-    rm /usr/local/bin/hoard
+INSTALL_DIR="$HOME/bin"
+if [ "$(uname)" == "Darwin" ]; then
+    INSTALL_DIR="/usr/local"
 fi
 
-(ln `dirname "$0"`/hoard /usr/local/bin/hoard && echo "Installed 'hoard' at /usr/local/bin/hoard") || (echo "Installation failure" && exit 1)
+if [ -f "$INSTALL_DIR/bin/hoard" ]; then
+    echo "We'll be updating the installation of hoard at $INSTALL_DIR/bin/hoard. [ctrl-c to cancel]"
+    sleep 3
+    rm $INSTALL_DIR/bin/hoard
+fi
+
+(ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
 file=
 if [ -f "$HOME/.bashrc" ]; then
