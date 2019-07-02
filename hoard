@@ -1,63 +1,148 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-SESSIONBAK="/home/$(whoami)/.hoard_sessions"
-#export HOARD_SESSIONS=$SESSIONBAK
 
-if [[ -z "$1" || "$1" =~ ^(-*)h(elp|)$ ]]
+######### SOURCED FILE DETECTION ##########
+# Try to execute a `return` statement,
+# but do it in a sub-shell and catch the results.
+# If this script isn't sourced, that will raise an error.
+$(return >/dev/null 2>&1)
+
+if [ "$?" -eq "0" ]
 then
-    echo "Usage: hoard COMMAND"
-    echo "Simple terminal session manager."
-    echo
-    echo "COMMANDS:"
-    echo "  ls - List all saved hoard sessions"
-    echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
-    echo "  d [NUMBER] - Delete hoard session [NUMBER]"
-    echo "  s - Save current directory as a hoard session"
-    echo
+    #file is sourced
+    echo -n 
 else
-    #echo $1 $2
-    case $1 in
-        "ls")
-            echo "listing saved sessions"
-            #cat $SESSIONBAK
+    echo "This tool can only be ran after it's sourced. Try running 'source hoard' before running 'hoard'.";
+fi
+###########################################
+
+
+hoard() {
+
+    SESSIONBAK="$HOME/.hoard_sessions"
+    #export HOARD_SESSIONS=$SESSIONBAK
+
+    if [[ -z "$1" || "$1" =~ ^(-*)h(elp|)$ ]]
+    then
+        echo "Usage: hoard COMMAND"
+        echo "Simple terminal session manager."
+        echo
+        echo "COMMANDS:"
+        echo "  ls - List all saved hoard sessions"
+        echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
+        echo "  d [NUMBER] - Delete hoard session [NUMBER]"
+        echo "  s - Save current directory as a hoard session"
+        echo
+    else
+        
+        
+        listSaved() {
+            
+            #list all sessions saved by reading from file.
             i=1
             while IFS= read -r line; do
-                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\1/p')
-                session=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\2/p')
+                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
                 echo "    $i: $timestamp $(echo "$session" | tail -c 40)"
                 let "i++"
-            done < "$SESSIONBAK"
-        ;;
+            done < "$1"
 
-        "a")
-            line=$(cat $SESSIONBAK | sed -n "$2p")
-            echo "attaching $line"
-            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
-            session=$(echo "$line" | sed -n 's/\(\[[^]]*\?\]\) *\(.*\)/\2/p')
-            echo $session
-            cd "$session"
 
-            sed -i "$2d" $SESSIONBAK
-        ;;
+            #If index is never updated, the file is empty. 
+            #Indicate to user that no sessions are found.
+            if [[ "$i" == "1" ]];
+            then
+                echo "  (There're no sessions saved.)  ";
+                return 1
+            fi
 
-        "d")
-            line=$(cat $SESSIONBAK | sed -n "$2p")
-            echo "deleting $line"
-            sed -i "$2d" $SESSIONBAK
-        ;;
+            #success
+            return 0
+        }
 
-        "s")
-            line="[$(date +"%x %X")] $(pwd)"
-            echo "saving $line"
-            echo "$line" >> $SESSIONBAK
-        ;;
-    esac
-fi
 
-#copy the section below into your .bashrc and uncomment to turn on auto save
-#finish() {
-#    hoard s
-#}
-#
-#trap finish EXIT
+        hasItem() {
+            i=1
+            while IFS= read -r line; do
+                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
 
+                if [[ "$i" == "$2" ]]
+                then
+                    return 0
+                fi
+
+                let "i++"
+            done < "$1"
+
+            return 1
+        }
+
+        SELECTED_SESSION=$2
+
+        #we should do validation of input when attaching or deleting sessions.
+        if [[ ("$1" == "a" || "$1" == "d") ]]
+        then
+
+            #check if the second option is present. If not, request input.
+            if [[ -z "$SELECTED_SESSION" ]]
+            then
+                if listSaved $SESSIONBAK
+                then
+                    echo "You didn't specify a session number. Here're a list of all of them."
+                    echo
+                    read -p "Which session would you like to use for 'hoard $1'? [ctrl-c to cancel]: " value
+                    SELECTED_SESSION=$value
+                else
+                    return 1;
+                fi
+            fi
+
+            #do final validation
+            if hasItem $SESSIONBAK $SELECTED_SESSION; then :
+            else
+                echo "session $SELECTED_SESSION not found."
+                return 1;
+            fi
+        fi
+
+
+        case $1 in
+            "ls")
+                echo "listing saved sessions"
+                listSaved $SESSIONBAK
+                ;;
+
+            "a")
+                line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+                echo "attaching $line"
+                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+                echo $session
+                cd "$session"
+                
+                if [ "$(uname)" == "Darwin" ]; then
+                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                else
+                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                fi
+                ;;
+
+            "d")
+                line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+                echo "deleting $line"
+                if [ "$(uname)" == "Darwin" ]; then
+                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                else
+                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                fi
+                ;;
+
+            "s")
+                line="[$(date +"%x %X")] $(pwd)"
+                echo "saving $line"
+                echo "$line" >> $SESSIONBAK
+                ;;
+        esac
+    fi
+}

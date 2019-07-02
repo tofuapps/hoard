@@ -1,19 +1,19 @@
 # hoard
 
-A simple terminal session manager.
+A simple terminal directory session manager. Works on Linux and macOS.
 
 ## Installation
-Just drop `hoard` into a folder in your path.
-
-Or you can fire up a terminal and execute the following:
+Easy, just clone this git repository, then run the install script like so:
 ```
-git clone https://gitlab.com/l-yc/hoard.git
 cd hoard
-ln hoard ~/bin
+./install
 ```
 
 ## Configuration
-If you want `hoard` to automatically save each exited session, you can copy the following into your` .bashrc`.
+`hoard` should be 'plug and play', and wouldn't need configurations.
+
+However, if you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (on relevant systems).
+
 ```
 finish() {
     hoard s
@@ -27,3 +27,9 @@ trap finish EXIT
 - **a [NUMBER]** - Attach to hoard session [NUMBER]
 - **d [NUMBER]** - Delete hoard session [NUMBER]
 - **s** - Save current directory as a hoard session
+
+## Uninstallation
+```
+cd hoard
+./uninstall
+```
