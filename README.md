@@ -37,7 +37,7 @@ Bookmarks are permanent forms of saving a directory for future use, by using a r
 - **lb** - List all saved hoard bookmarks
 - **o [NAME]** - Open hoard bookmark [NAME]
 - **x [NAME]** - Delete hoard bookmark [NAME]
-- **b [NAME]** - Bookmark current directory [NAME]
+- **b [NAME]** - Bookmark current directory as [NAME]
 
 ## Uninstallation
 ```
