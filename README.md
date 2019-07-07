@@ -23,10 +23,17 @@ trap finish EXIT
 ```
 
 ## Commands
+### Session Control
 - **ls** - List all saved hoard sessions
 - **a [NUMBER]** - Attach to hoard session [NUMBER]
 - **d [NUMBER]** - Delete hoard session [NUMBER]
 - **s** - Save current directory as a hoard session
+
+### Bookmark Control
+- **lb** - List all saved hoard bookmarks"
+- **o [NAME]** - Open hoard bookmark [NAME]"
+- **x [NAME]** - Delete hoard bookmark [NAME]"
+- **b [NAME]** - Bookmark current directory"
 
 ## Uninstallation
 ```

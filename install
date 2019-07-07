@@ -16,6 +16,7 @@ fi
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
 touch "$HOME/.hoard_sessions"
+touch "$HOME/.hoard_bookmarks"
 
 file=
 if [ -f "$HOME/.bashrc" ]; then

@@ -20,18 +20,26 @@ fi
 hoard() {
 
     SESSIONBAK="$HOME/.hoard_sessions"
+    BOOKMARKBAK="$HOME/.hoard_bookmarks"
     #export HOARD_SESSIONS=$SESSIONBAK
 
     if [[ -z "$1" || "$1" =~ ^(-*)h(elp|)$ ]]
     then
         echo "Usage: hoard COMMAND"
-        echo "Simple terminal session manager."
+        echo "Simple terminal session/bookmark manager."
         echo
         echo "COMMANDS:"
+        echo "- Session Control"
         echo "  ls - List all saved hoard sessions"
         echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
         echo "  d [NUMBER] - Delete hoard session [NUMBER]"
         echo "  s - Save current directory as a hoard session"
+        echo
+        echo "- Bookmark Control"
+        echo "  lb - List all saved hoard bookmarks"
+        echo "  o [NAME] - Open hoard bookmark [NAME]"
+        echo "  x [NAME] - Delete hoard bookmark [NAME]"
+        echo "  b [NAME] - Bookmark current directory"
         echo
     else
         
@@ -142,6 +150,56 @@ hoard() {
                 line="[$(date +"%x %X")] $(pwd)"
                 echo "saving $line"
                 echo "$line" >> $SESSIONBAK
+                ;;
+
+            "lb")
+                #list all sessions saved by reading from file.
+                i=1
+                while IFS= read -r line; do
+                    name=$(echo "$line" | sed -n 's/\[\([^]]*\)\] *\(.*\)/\1/p')
+                    session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+                    echo "    $name: $(echo "$session" | tail -c 40)"
+                    let "i++"
+                done < "$BOOKMARKBAK"
+                ;;
+            "o")
+                i=1
+                while IFS= read -r line; do
+                    name=$(echo "$line" | sed -n 's/\[\([^]]*\)\] *\(.*\)/\1/p')
+                    session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+                    #echo "    $name: $(echo "$session" | tail -c 40)"
+                    if [ "$name" == "$2" ]; then
+                        echo "attaching bookmark $session"
+                        cd "$session"
+                        break
+                    fi
+                    let "i++"
+                done < "$BOOKMARKBAK"
+                ;;
+            "x")
+                i=1
+                while IFS= read -r line; do
+                    name=$(echo "$line" | sed -n 's/\[\([^]]*\)\] *\(.*\)/\1/p')
+                    session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+                    #echo "    $name: $(echo "$session" | tail -c 40)"
+                    if [ "$name" == "$2" ]; then
+                        break
+                    fi
+                    let "i++"
+                done < "$BOOKMARKBAK"
+
+                line=$(cat $BOOKMARKBAK | sed -n "`echo "$i"`p")
+                echo "deleting bookmark $line"
+                if [ "$(uname)" == "Darwin" ]; then
+                    sed -i '' "`echo "$i"`d" $BOOKMARKBAK
+                else
+                    sed -i "`echo "$i"`d" $BOOKMARKBAK
+                fi
+                ;;
+            "b")
+                line="[$2] $(pwd)"
+                echo "saving bookmark $line"
+                echo "$line" >> $BOOKMARKBAK
                 ;;
         esac
     fi
