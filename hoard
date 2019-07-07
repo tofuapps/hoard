@@ -20,129 +20,344 @@ fi
 hoard() {
 
     SESSIONBAK="$HOME/.hoard_sessions"
+    BOOKMARKBAK="$HOME/.hoard_bookmarks"
     #export HOARD_SESSIONS=$SESSIONBAK
 
-    if [[ -z "$1" || "$1" =~ ^(-*)h(elp|)$ ]]
-    then
-        echo "Usage: hoard COMMAND"
-        echo "Simple terminal session manager."
-        echo
-        echo "COMMANDS:"
-        echo "  ls - List all saved hoard sessions"
-        echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
-        echo "  d [NUMBER] - Delete hoard session [NUMBER]"
-        echo "  s - Save current directory as a hoard session"
-        echo
-    else
-        
-        
-        listSaved() {
-            
-            #list all sessions saved by reading from file.
-            i=1
-            while IFS= read -r line; do
-                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
-                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
-                echo "    $i: $timestamp $(echo "$session" | tail -c 40)"
-                let "i++"
-            done < "$1"
 
 
-            #If index is never updated, the file is empty. 
-            #Indicate to user that no sessions are found.
-            if [[ "$i" == "1" ]];
+    sessionsSaved() {
+
+        #list all sessions saved by reading from file.
+        i=1
+        while IFS= read -r line; do
+            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+            session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+            echo "    $i: $timestamp $(echo "$session" | tail -c 40)"
+            let "i++"
+        done < "$1"
+
+
+        #If index is never updated, the file is empty. 
+        #Indicate to user that no sessions are found.
+        if [[ "$i" == "1" ]];
+        then
+            echo "  (There're no sessions saved.)  ";
+            return 1
+        fi
+
+        #success
+        return 0
+    }
+
+
+    hasSessionSaved() {
+        i=1
+        while IFS= read -r line; do
+            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+            session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+
+            if [[ "$i" == "$2" ]]
             then
-                echo "  (There're no sessions saved.)  ";
-                return 1
+                return 0
             fi
 
-            #success
-            return 0
-        }
+            let "i++"
+        done < "$1"
+
+        return 1
+    }
 
 
-        hasItem() {
-            i=1
-            while IFS= read -r line; do
-                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
-                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
 
-                if [[ "$i" == "$2" ]]
-                then
+    bookmarksSaved() {
+
+        #list all sessions saved by reading from file.
+        #params:
+        #    $1=file,
+        #    $2=bkNameToSearch,
+        #    $3=modifier [-i for printing only index, -s for printing only bookmark link. ]
+        #
+        # Not providing anything for $2 and $3 will allow full printout and returns error code 1 if no bookmarks exist.
+
+        i=1
+        while IFS= read -r line; do
+            name=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+            session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+
+            if [[ -z "$3" ]]
+            then
+                echo "    $name: $(echo "$session" | tail -c 40)"
+            fi
+
+            if [[ -z "$2" ]]; then
+                :
+            elif [[ "$name" == "[$2]" ]]; then
+                if [[ "$3" == "-i" ]]; then
+                    echo $i
+                    return 0
+                else [[ "$3" == "-s" ]];
+                    echo $session
                     return 0
                 fi
-
-                let "i++"
-            done < "$1"
-
-            return 1
-        }
-
-        SELECTED_SESSION=$2
-
-        #we should do validation of input when attaching or deleting sessions.
-        if [[ ("$1" == "a" || "$1" == "d") ]]
-        then
-
-            #check if the second option is present. If not, request input.
-            if [[ -z "$SELECTED_SESSION" ]]
-            then
-                if listSaved $SESSIONBAK
-                then
-                    echo "You didn't specify a session number. Here're a list of all of them."
-                    echo
-                    read -p "Which session would you like to use for 'hoard $1'? [ctrl-c to cancel]: " value
-                    SELECTED_SESSION=$value
-                else
-                    return 1;
-                fi
             fi
 
-            #do final validation
-            if hasItem $SESSIONBAK $SELECTED_SESSION; then :
+            let "i++"
+        done < "$1"
+
+
+        #If index is never updated, the file is empty. 
+        #Indicate to user that no sessions are found.
+        if [[ "$i" == "1" && -z "$2" && -z "$3" ]];
+        then
+            echo "  (There're no bookmarks saved.)  ";
+            return 1
+        fi
+
+        if [[ -z "$2" ]]; then
+            return 0
+        elif [[ "$3" == "-i" ]]; then
+            echo "-1"
+            return 1
+        elif [[ "$3" == "-s" || -z "$3" ]]; then
+            echo ""
+            return 1
+        fi
+
+    }
+
+    SELECTED_SESSION=$2
+    SELECTED_BOOKMARK=$2
+
+    #we should do validation of input when attaching or deleting sessions.
+    if [[ ("$1" == "a" || "$1" == "d") ]]
+    then
+
+        #check if the second option is present. If not, request input.
+        while [[ -z "$SELECTED_SESSION" ]]
+        do
+            if sessionsSaved $SESSIONBAK
+            then
+                echo "You didn't specify a session number. Here're a list of all of them."
+                echo
+                read -p "Which session would you like to use for 'hoard $1'? [ctrl-c to cancel]: " value
+                SELECTED_SESSION=$value
+            else
+                return 1;
+            fi
+            if [[ -z "$SELECTED_SESSION" ]]; then echo "You didn't input anything."; echo; echo; fi
+        done
+    fi
+
+    #we should do validation of input when attaching or deleting bookmarks as well.
+    if [[ ("$1" == "o" || "$1" == "x") ]]
+    then
+
+        #check if the second option is present. If not, request input.
+        while [[ -z "$SELECTED_BOOKMARK" ]]
+        do
+            if bookmarksSaved $BOOKMARKBAK
+            then
+                echo "You didn't specify a bookmark name. Here're a list of all of them."
+                echo
+                read -p "Which bookmark would you like to use for 'hoard $1'? [ctrl-c to cancel]: " value
+                SELECTED_BOOKMARK=$value
+            else
+                return 1;
+            fi
+            if [[ -z "$SELECTED_BOOKMARK" ]]; then echo "You didn't input anything."; echo; echo; fi
+        done
+    fi
+
+    #perform automatic verification of whether command is suitable for bookmarks or sessions, and confirm autocorrection to user
+    SELECTED_COMMAND=$1
+    case $1 in
+        "a" | "d" | "s")
+            case $2 in
+                ''|[0-9]*) ;; #pass, is a number
+                *) 
+                    case $1 in
+                        "a") SELECTED_COMMAND="o";;
+                        "d") SELECTED_COMMAND="x";;
+                        "s") SELECTED_COMMAND="b";;
+                    esac                   
+                    read -p "Error: session is not a number, did you mean to use 'hoard $SELECTED_COMMAND'? [yN]: " input
+                    case $input in
+                        [yY]);;
+                        *) 
+                            echo "Cancelling."
+                            return 1;;
+                    esac
+                    ;;
+            esac
+            ;;
+        "b" | "o" | "x")
+            case $2 in
+                [0-9]*) 
+                    case $1 in
+                        "o") SELECTED_COMMAND="a";;
+                        "x") SELECTED_COMMAND="d";;
+                        "b") SELECTED_COMMAND="s";;
+                    esac
+
+                    read -p "Error: bookmark name is a number, did you mean to use 'hoard $SELECTED_COMMAND'? [yN]: " input
+                    case $input in
+                        [yY]);;
+                        *) 
+                            echo "Cancelling."
+                            return 1;;
+                    esac
+                    ;;
+                ''|*) ;; #pass, is not a number
+            esac
+            ;;
+    esac
+
+    case $SELECTED_COMMAND in
+        "ls")
+            echo "listing saved sessions"
+            sessionsSaved $SESSIONBAK
+            ;;
+
+        "a")
+            if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
             else
                 echo "session $SELECTED_SESSION not found."
                 return 1;
             fi
-        fi
+
+            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+            echo "attaching $line"
+            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
+            session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
+            cd "$session"
+
+            if [ "$(uname)" == "Darwin" ]; then
+                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            else
+                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            fi
+            ;;
 
 
-        case $1 in
-            "ls")
-                echo "listing saved sessions"
-                listSaved $SESSIONBAK
-                ;;
+        "d")
+            if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
+            else
+                echo "session $SELECTED_SESSION not found."
+                return 1;
+            fi
 
-            "a")
-                line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
-                echo "attaching $line"
-                timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
-                session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
-                echo $session
+            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+            echo "deleting $line"
+            if [ "$(uname)" == "Darwin" ]; then
+                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            else
+                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            fi
+            ;;
+
+        "s")
+            if [[ ! -z "$2" ]]; then
+                echo "Error: Saving to a specific session number is not yet supported."
+                return 1
+            fi
+            line="[$(date +"%x %X")] $(pwd)"
+            echo "saving $line"
+            echo "$line" >> $SESSIONBAK
+            ;;
+
+        "d")
+            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+            echo "deleting $line"
+            if [ "$(uname)" == "Darwin" ]; then
+                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            else
+                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+            fi
+            ;;
+
+        "s")
+            line="[$(date +"%x %X")] $(pwd)"
+            echo "saving $line"
+            echo "$line" >> $SESSIONBAK
+            ;;
+
+        "lb")
+            echo "listing saved bookmarks"
+            bookmarksSaved $BOOKMARKBAK
+            ;;
+
+        "o")
+            session=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -s)
+            if [ ! -z "$session" ]; then
+                echo "opening bookmark $session"
                 cd "$session"
-                
-                if [ "$(uname)" == "Darwin" ]; then
-                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-                else
-                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-                fi
-                ;;
+            else 
+                echo "bookmark $SELECTED_BOOKMARK not found"
+            fi
+            ;;
 
-            "d")
-                line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
-                echo "deleting $line"
-                if [ "$(uname)" == "Darwin" ]; then
-                    sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-                else
-                    sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-                fi
-                ;;
+        "x")
 
-            "s")
-                line="[$(date +"%x %X")] $(pwd)"
-                echo "saving $line"
-                echo "$line" >> $SESSIONBAK
-                ;;
-        esac
-    fi
+            i=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
+
+            if [[ "$i" == "-1" ]]
+            then
+                echo "bookmark $SELECTED_BOOKMARK not found"
+                return 1
+            fi
+
+            line=$(cat $BOOKMARKBAK | sed -n "`echo "$i"`p")
+            echo "deleting bookmark $line"
+            if [ "$(uname)" == "Darwin" ]; then
+                sed -i '' "`echo "$i"`d" $BOOKMARKBAK
+            else
+                sed -i "`echo "$i"`d" $BOOKMARKBAK
+            fi
+            ;;
+        "b")
+            while [[ -z $SELECTED_BOOKMARK ]]; do
+                read -p "Please type your bookmark name to save as [ctrl-c to cancel] " value
+                SELECTED_BOOKMARK=$value
+                if [[ -z $SELECTED_BOOKMARK ]]; then
+                    echo "You did not enter a value."
+                    echo; echo;
+                fi
+            done
+
+            bkExisting=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
+            if [[ "$bkExisting" != "-1" ]]; then
+                echo "bookmark already exists '$bkExisting'"
+                return 1
+            fi
+
+            line="[$SELECTED_BOOKMARK] $(pwd)"
+            echo "saving bookmark $line"
+            echo "$line" >> $BOOKMARKBAK
+            ;;
+
+        ''|*-h*)
+            echo "Usage: hoard COMMAND"
+            echo "Simple terminal session manager."
+            echo
+            echo "COMMANDS:"
+            echo "Simple terminal session/bookmark manager."
+            echo
+            echo "COMMANDS:"
+            echo "- Session Control"
+            echo "  ls - List all saved hoard sessions"
+            echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
+            echo "  d [NUMBER] - Delete hoard session [NUMBER]"
+            echo "  s - Save current directory as a hoard session"
+            echo
+            echo "- Bookmark Control"
+            echo "  lb - List all saved hoard bookmarks"
+            echo "  o [NAME] - Open hoard bookmark [NAME]"
+            echo "  x [NAME] - Delete hoard bookmark [NAME]"
+            echo "  b [NAME] - Bookmark current directory as [NAME]"
+            ;;
+        *)
+            echo "Error: invalid command."
+            echo "See 'hoard --help'."
+            ;;
+    esac
 }

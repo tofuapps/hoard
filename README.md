@@ -23,10 +23,21 @@ trap finish EXIT
 ```
 
 ## Commands
+### Session Control
+Sessions are temporary forms of saving a directory as a session, so that if you left the directory, you can re-attach it (and discard the saved session once re-attached) when you're back.
+
 - **ls** - List all saved hoard sessions
 - **a [NUMBER]** - Attach to hoard session [NUMBER]
 - **d [NUMBER]** - Delete hoard session [NUMBER]
 - **s** - Save current directory as a hoard session
+
+### Bookmark Control
+Bookmarks are permanent forms of saving a directory for future use, by using a reference name. This allows you to open a bookmark to jump to a directory at anytime.
+
+- **lb** - List all saved hoard bookmarks
+- **o [NAME]** - Open hoard bookmark [NAME]
+- **x [NAME]** - Delete hoard bookmark [NAME]
+- **b [NAME]** - Bookmark current directory [NAME]
 
 ## Uninstallation
 ```

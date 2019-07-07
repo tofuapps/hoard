@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
+
 INSTALL_DIR="$HOME"
 if [ "$(uname)" == "Darwin" ]; then
     INSTALL_DIR="/usr/local"
 fi
 
 echo "We'll be uninstalling hoard ($INSTALL_DIR/bin/hoard) and all related files. [ctrl-c to cancel]"
-sleep 3
+sleep 2
 
 (rm $INSTALL_DIR/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at $INSTALL_DIR/bin/hoard")
 
@@ -18,16 +19,17 @@ elif [ -f "$HOME/.bash_profile" ]; then
 fi
 
 rm ~/.hoard_sessions >> /dev/null 2>&1
+rm ~/.hoard_bookmarks >> /dev/null 2>&1
 
 if [[ -z "$file" ]]; then
-    echo "We've removed everything related to hoard."
-    echo "However, please remove '. hoard' from your .bashrc file or equivalent if you added that manually."
+    echo "We've removed everything related to 'hoard'."
+    echo "However, please remove '. hoard' from your .bashrc file or equivalent if you ever added that manually."
 else
     if [ "$(uname)" == "Darwin" ]; then
         sed -i '' "/\. hoard$/g" "$file"
     else 
         sed -i "/\. hoard$/g" "$file"
     fi
-    echo "We've removed everything related to 'hoard',"
-    echo "and it should not be usable in subsequent terminal sessions."
+    echo "We've removed everything related to 'hoard'."
 fi
+echo "Please restart all existing terminal windows to completely remove the ability to run 'hoard'."
