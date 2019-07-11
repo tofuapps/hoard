@@ -26,9 +26,9 @@ if [[ -z "$file" ]]; then
     echo "However, please remove '. hoard' from your .bashrc file or equivalent if you ever added that manually."
 else
     if [ "$(uname)" == "Darwin" ]; then
-        sed -i '' "/\. hoard$/g" "$file"
+        sed -i '' "/\. .*hoard$/g" "$file"
     else 
-        sed -i "/\. hoard$/g" "$file"
+        sed -i "/\. .*hoard$/g" "$file"
     fi
     echo "We've removed everything related to 'hoard'."
 fi

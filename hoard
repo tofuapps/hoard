@@ -324,6 +324,15 @@ hoard() {
                 fi
             done
 
+            case $SELECTED_BOOKMARK in
+                [0-9]*) 
+                    echo "Error: bookmark name is/starts with a number."
+                    return 1
+                    ;;
+                ''|*) 
+                    ;; 
+            esac
+
             bkExisting=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
             if [[ "$bkExisting" != "-1" ]]; then
                 echo "bookmark already exists '$bkExisting'"

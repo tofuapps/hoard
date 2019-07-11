@@ -31,11 +31,11 @@ if [[ -z "$file" ]]; then
     echo "Otherwise, you should run the hoard command '. hoard' to use the command 'hoard'."
 else
     if [ "$(uname)" == "Darwin" ]; then
-        sed -i '' "/\. hoard$/g" "$file"
+        sed -i '' "/\. .*hoard$/g" "$file"
     else 
-        sed -i "/\. hoard$/g" "$file"
+        sed -i "/\. .*hoard$/g" "$file"
     fi
-    echo ". hoard" >> "$file"
+    echo ". $INSTALL_DIR/bin/hoard" >> "$file"
     echo
     echo "Note that you may need to restart your terminal session"
     echo "or run 'source hoard' in order to use the 'hoard' command immediately."
