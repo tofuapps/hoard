@@ -28,6 +28,7 @@ Sessions are temporary forms of saving a directory. When you save a session and 
 
 Sessions are stored in chronological order, accessibile via numeric indicies with the oldest session starting from `1`.
 
+=======
 - **ls** - List all saved hoard sessions
 - **a [NUMBER]** - Attach to hoard session [NUMBER]
 - **d [NUMBER]** - Delete hoard session [NUMBER]
@@ -47,6 +48,13 @@ Bookmark names can be any string you like, but cannot start with a number.
 
 ## Uninstallation
 Similar to the installation process, clone this repository (if you have not), then run the uninstall script like so:
+=======
+- **lb** - List all saved hoard bookmarks"
+- **o [NAME]** - Open hoard bookmark [NAME]"
+- **x [NAME]** - Delete hoard bookmark [NAME]"
+- **b [NAME]** - Bookmark current directory"
+
+## Uninstallation
 ```
 cd hoard
 ./uninstall
