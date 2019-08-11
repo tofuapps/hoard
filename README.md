@@ -1,6 +1,6 @@
 # hoard
 
-A simple terminal directory session manager. Works on Linux and macOS.
+A simple terminal directory session manager. Works with `bash` on Linux and macOS.
 
 ## Installation
 Easy, just clone this git repository, then run the install script like so:
@@ -47,12 +47,6 @@ Bookmark names can be any string you like, but cannot start with a number.
 
 ## Uninstallation
 Similar to the installation process, clone this repository (if you have not), then run the uninstall script like so:
-- **lb** - List all saved hoard bookmarks"
-- **o [NAME]** - Open hoard bookmark [NAME]"
-- **x [NAME]** - Delete hoard bookmark [NAME]"
-- **b [NAME]** - Bookmark current directory"
-
-## Uninstallation
 ```
 cd hoard
 ./uninstall
