@@ -1,6 +1,8 @@
 # hoard
 
-A simple terminal directory session manager. Works with `bash` on Linux and macOS.
+A simple terminal directory session manager. Designed to work in `bash` on Linux and macOS.
+
+This script allows you to easily save 'sessions' in the form of a pointer to a directory you want to access in the future. It can be a temporary session, or a permanent bookmark. This frees you the need to `cd` everywhere to go to that commonly-used directory you need. Just open a bookmark or attach to a session and you're good to go!
 
 ## Installation
 Easy, just clone this git repository, then run the install script like so:
@@ -12,7 +14,7 @@ cd hoard
 ## Configuration
 `hoard` should be 'plug and play', and wouldn't need configurations.
 
-However, if you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (on relevant systems).
+However, if you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (or others on relevant systems).
 
 ```
 finish() {
@@ -43,7 +45,7 @@ Bookmark names can be any string you like, but cannot start with a number.
 - **x [NAME]** - Delete hoard bookmark [NAME]
 - **b [NAME]** - Bookmark current directory as [NAME]
 
-\*\*`hoard` now has smart error handling capabilities, so that even if you mess up by executing the wrong `hoard` command listed above, `hoard` can automatically apply corrections or request more info about the command you were trying to execute.
+\*\* If you mix up bookmarks and sessions by executing the wrong `hoard` command listed above, `hoard` can automatically perform corrections or request more info about the command you were trying to execute.
 
 ## Uninstallation
 Similar to the installation process, clone this repository (if you have not), then run the uninstall script like so:

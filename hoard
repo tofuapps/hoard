@@ -129,7 +129,7 @@ hoard() {
     SELECTED_BOOKMARK=$2
 
     #we should do validation of input when attaching or deleting sessions.
-    if [[ ("$1" == "a" || "$1" == "d") ]]
+    if [[ ("$1" == "a" || "$1" == "attach" || "$1" == "d" || "$1" == "delete") ]]
     then
 
         #check if the second option is present. If not, request input.
@@ -149,7 +149,7 @@ hoard() {
     fi
 
     #we should do validation of input when attaching or deleting bookmarks as well.
-    if [[ ("$1" == "o" || "$1" == "x") ]]
+    if [[ ("$1" == "o" || "$1" == "open" || "$1" == "x") ]]
     then
 
         #check if the second option is present. If not, request input.
@@ -171,14 +171,14 @@ hoard() {
     #perform automatic verification of whether command is suitable for bookmarks or sessions, and confirm autocorrection to user
     SELECTED_COMMAND=$1
     case $1 in
-        "a" | "d" | "s")
+        "a"* | "d"* | "s"*)
             case $2 in
                 ''|[0-9]*) ;; #pass, is a number
                 *) 
                     case $1 in
-                        "a") SELECTED_COMMAND="o";;
-                        "d") SELECTED_COMMAND="x";;
-                        "s") SELECTED_COMMAND="b";;
+                        "a"*) SELECTED_COMMAND="o";;
+                        "d"*) SELECTED_COMMAND="x";;
+                        "s"*) SELECTED_COMMAND="b";;
                     esac                   
                     read -p "Error: session is not a number, did you mean to use 'hoard $SELECTED_COMMAND'? [yN]: " input
                     case $input in
@@ -190,13 +190,13 @@ hoard() {
                     ;;
             esac
             ;;
-        "b" | "o" | "x")
+        "b"* | "o"* | "x"* )
             case $2 in
                 [0-9]*) 
                     case $1 in
-                        "o") SELECTED_COMMAND="a";;
-                        "x") SELECTED_COMMAND="d";;
-                        "b") SELECTED_COMMAND="s";;
+                        "o"*) SELECTED_COMMAND="a";;
+                        "x"*) SELECTED_COMMAND="d";;
+                        "b"*) SELECTED_COMMAND="s";;
                     esac
 
                     read -p "Error: bookmark name is a number, did you mean to use 'hoard $SELECTED_COMMAND'? [yN]: " input
@@ -218,7 +218,7 @@ hoard() {
             sessionsSaved $SESSIONBAK
             ;;
 
-        "a")
+        "a"|"attach")
             if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
             else
                 echo "session $SELECTED_SESSION not found."
@@ -239,7 +239,7 @@ hoard() {
             ;;
 
 
-        "d")
+        "d"|"delete")
             if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
             else
                 echo "session $SELECTED_SESSION not found."
@@ -255,27 +255,11 @@ hoard() {
             fi
             ;;
 
-        "s")
+        "s"|"save")
             if [[ ! -z "$2" ]]; then
                 echo "Error: Saving to a specific session number is not yet supported."
                 return 1
             fi
-            line="[$(date +"%x %X")] $(pwd)"
-            echo "saving $line"
-            echo "$line" >> $SESSIONBAK
-            ;;
-
-        "d")
-            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
-            echo "deleting $line"
-            if [ "$(uname)" == "Darwin" ]; then
-                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-            else
-                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
-            fi
-            ;;
-
-        "s")
             line="[$(date +"%x %X")] $(pwd)"
             echo "saving $line"
             echo "$line" >> $SESSIONBAK
@@ -286,7 +270,7 @@ hoard() {
             bookmarksSaved $BOOKMARKBAK
             ;;
 
-        "o")
+        "o"|"open")
             session=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -s)
             if [ ! -z "$session" ]; then
                 echo "opening bookmark $session"
@@ -314,7 +298,7 @@ hoard() {
                 sed -i "`echo "$i"`d" $BOOKMARKBAK
             fi
             ;;
-        "b")
+        "b"|"book"|"bookmark")
             while [[ -z $SELECTED_BOOKMARK ]]; do
                 read -p "Please type your bookmark name to save as [ctrl-c to cancel] " value
                 SELECTED_BOOKMARK=$value
