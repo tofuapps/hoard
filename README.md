@@ -4,6 +4,16 @@ A simple terminal directory session manager. Designed to work in `bash` on Linux
 
 This script allows you to easily save 'sessions' in the form of a pointer to a directory you want to access in the future. It can be a temporary session, or a permanent bookmark. This frees you the need to `cd` everywhere to go to that commonly-used directory you need. Just open a bookmark or attach to a session and you're good to go!
 
+
+## Prerequisites
+
+Linux:
+- The directory ~/bin/ needs to be available and used for storing binaries. This is usually already present on most systems.
+
+macOS:
+- The directory /usr/local/bin/ needs to be available and used for storing binaries. This is usually present if you already installed `homebrew`.
+
+
 ## Installation
 Easy, just clone this git repository, then run the install script like so:
 ```

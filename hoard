@@ -12,7 +12,7 @@ then
     #file is sourced
     echo -n 
 else
-    echo "This tool can only be ran after it's sourced. Try running 'source hoard' before running 'hoard'.";
+    echo "This tool can only be run after it's sourced. Try running 'source hoard' before running 'hoard'.";
 fi
 ###########################################
 
