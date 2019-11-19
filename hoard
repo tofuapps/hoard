@@ -319,7 +319,7 @@ hoard() {
 
             bkExisting=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
             if [[ "$bkExisting" != "-1" ]]; then
-                echo "bookmark already exists '$bkExisting'"
+                echo "bookmark '$SELECTED_BOOKMARK' already exists"
                 return 1
             fi
 
