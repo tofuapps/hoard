@@ -331,9 +331,6 @@ hoard() {
 
         ''|*-h*)
             echo "Usage: hoard COMMAND"
-            echo "Simple terminal session manager."
-            echo
-            echo "COMMANDS:"
             echo "Simple terminal session/bookmark manager."
             echo
             echo "COMMANDS:"
