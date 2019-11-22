@@ -34,6 +34,8 @@ finish() {
 trap finish EXIT
 ```
 
+By default, the list of sessions are stored in `~/.hoard\_sessions`, and list of bookmarks are stored in `~/.hoard\_bookmarks`. If you would like to specify a new location to store these, assign and export the enviromental variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
+
 ## Commands
 ### Session Control
 Sessions are temporary forms of saving a directory. When you save a session and leave the directory you are in, you can re-attach the session (while the saved session will be discarded once re-attached) to go back to the original directory.

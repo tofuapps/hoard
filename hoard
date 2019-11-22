@@ -10,7 +10,7 @@ $(return >/dev/null 2>&1)
 if [ "$?" -eq "0" ]
 then
     #file is sourced
-    echo -n 
+    :
 else
     echo "This tool can only be run after it's sourced. Try running 'source hoard' before running 'hoard'.";
 fi
@@ -18,12 +18,13 @@ fi
 
 
 hoard() {
-
-    SESSIONBAK="$HOME/.hoard_sessions"
-    BOOKMARKBAK="$HOME/.hoard_bookmarks"
-    #export HOARD_SESSIONS=$SESSIONBAK
-
-
+    
+    if [[ -z "$HOARD_SESSIONS_PATH" ]]; then
+        HOARD_SESSIONS_PATH="$HOME/.hoard_sessions"
+    fi
+    if [[ -z "$HOARD_BOOKMARKS_PATH" ]]; then
+        HOARD_BOOKMARKS_PATH="$HOME/.hoard_bookmarks"
+    fi
 
     sessionsSaved() {
 
@@ -135,7 +136,7 @@ hoard() {
         #check if the second option is present. If not, request input.
         while [[ -z "$SELECTED_SESSION" ]]
         do
-            if sessionsSaved $SESSIONBAK
+            if sessionsSaved $HOARD_SESSIONS_PATH
             then
                 echo "You didn't specify a session number. Here're a list of all of them."
                 echo
@@ -155,7 +156,7 @@ hoard() {
         #check if the second option is present. If not, request input.
         while [[ -z "$SELECTED_BOOKMARK" ]]
         do
-            if bookmarksSaved $BOOKMARKBAK
+            if bookmarksSaved $HOARD_BOOKMARKS_PATH
             then
                 echo "You didn't specify a bookmark name. Here're a list of all of them."
                 echo
@@ -215,43 +216,43 @@ hoard() {
     case $SELECTED_COMMAND in
         "ls")
             echo "listing saved sessions"
-            sessionsSaved $SESSIONBAK
+            sessionsSaved $HOARD_SESSIONS_PATH
             ;;
 
         "a"|"attach")
-            if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
+            if hasSessionSaved $HOARD_SESSIONS_PATH $SELECTED_SESSION; then :
             else
                 echo "session $SELECTED_SESSION not found."
                 return 1;
             fi
 
-            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+            line=$(cat $HOARD_SESSIONS_PATH | sed -n "`echo "$SELECTED_SESSION"`p")
             echo "attaching $line"
             timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
             session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
             cd "$session"
 
             if [ "$(uname)" == "Darwin" ]; then
-                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                sed -i '' "`echo "$SELECTED_SESSION"`d" $HOARD_SESSIONS_PATH
             else
-                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                sed -i "`echo "$SELECTED_SESSION"`d" $HOARD_SESSIONS_PATH
             fi
             ;;
 
 
         "d"|"delete")
-            if hasSessionSaved $SESSIONBAK $SELECTED_SESSION; then :
+            if hasSessionSaved $HOARD_SESSIONS_PATH $SELECTED_SESSION; then :
             else
                 echo "session $SELECTED_SESSION not found."
                 return 1;
             fi
 
-            line=$(cat $SESSIONBAK | sed -n "`echo "$SELECTED_SESSION"`p")
+            line=$(cat $HOARD_SESSIONS_PATH | sed -n "`echo "$SELECTED_SESSION"`p")
             echo "deleting $line"
             if [ "$(uname)" == "Darwin" ]; then
-                sed -i '' "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                sed -i '' "`echo "$SELECTED_SESSION"`d" $HOARD_SESSIONS_PATH
             else
-                sed -i "`echo "$SELECTED_SESSION"`d" $SESSIONBAK
+                sed -i "`echo "$SELECTED_SESSION"`d" $HOARD_SESSIONS_PATH
             fi
             ;;
 
@@ -262,16 +263,16 @@ hoard() {
             fi
             line="[$(date +"%x %X")] $(pwd)"
             echo "saving $line"
-            echo "$line" >> $SESSIONBAK
+            echo "$line" >> $HOARD_SESSIONS_PATH
             ;;
 
         "lb")
             echo "listing saved bookmarks"
-            bookmarksSaved $BOOKMARKBAK
+            bookmarksSaved $HOARD_BOOKMARKS_PATH
             ;;
 
         "o"|"open")
-            session=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -s)
+            session=$(bookmarksSaved $HOARD_BOOKMARKS_PATH $SELECTED_BOOKMARK -s)
             if [ ! -z "$session" ]; then
                 echo "opening bookmark $session"
                 cd "$session"
@@ -282,7 +283,7 @@ hoard() {
 
         "x")
 
-            i=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
+            i=$(bookmarksSaved $HOARD_BOOKMARKS_PATH $SELECTED_BOOKMARK -i)
 
             if [[ "$i" == "-1" ]]
             then
@@ -290,12 +291,12 @@ hoard() {
                 return 1
             fi
 
-            line=$(cat $BOOKMARKBAK | sed -n "`echo "$i"`p")
+            line=$(cat $HOARD_BOOKMARKS_PATH | sed -n "`echo "$i"`p")
             echo "deleting bookmark $line"
             if [ "$(uname)" == "Darwin" ]; then
-                sed -i '' "`echo "$i"`d" $BOOKMARKBAK
+                sed -i '' "`echo "$i"`d" $HOARD_BOOKMARKS_PATH
             else
-                sed -i "`echo "$i"`d" $BOOKMARKBAK
+                sed -i "`echo "$i"`d" $HOARD_BOOKMARKS_PATH
             fi
             ;;
         "b"|"book"|"bookmark")
@@ -317,7 +318,7 @@ hoard() {
                     ;; 
             esac
 
-            bkExisting=$(bookmarksSaved $BOOKMARKBAK $SELECTED_BOOKMARK -i)
+            bkExisting=$(bookmarksSaved $HOARD_BOOKMARKS_PATH $SELECTED_BOOKMARK -i)
             if [[ "$bkExisting" != "-1" ]]; then
                 echo "bookmark '$SELECTED_BOOKMARK' already exists"
                 return 1
@@ -325,7 +326,7 @@ hoard() {
 
             line="[$SELECTED_BOOKMARK] $(pwd)"
             echo "saving bookmark $line"
-            echo "$line" >> $BOOKMARKBAK
+            echo "$line" >> $HOARD_BOOKMARKS_PATH
             ;;
 
         ''|*-h*)
