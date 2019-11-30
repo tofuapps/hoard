@@ -22,19 +22,15 @@ cd hoard
 ```
 
 ## Configuration
-`hoard` should be 'plug and play', and wouldn't need configurations.
+`hoard` should be 'plug and play', and wouldn't need to be configured to function.
 
-However, if you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (or others on relevant systems).
+The list of sessions are stored in `~/.hoard_sessions`, and list of bookmarks are stored in `~/.hoard_bookmarks`. If you would like to specify a new location to store these, assign and export the enviromental variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
+
+If you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (or equivalent).
 
 ```
-finish() {
-    hoard s
-}
-
-trap finish EXIT
+trap 'hoard s' EXIT
 ```
-
-By default, the list of sessions are stored in `~/.hoard_sessions`, and list of bookmarks are stored in `~/.hoard_bookmarks`. If you would like to specify a new location to store these, assign and export the enviromental variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
 
 ## Commands
 ### Session Control
