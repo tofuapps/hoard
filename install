@@ -13,6 +13,12 @@ if [ -f "$INSTALL_DIR/bin/hoard" ]; then
     rm $INSTALL_DIR/bin/hoard
 fi
 
+echo "Updating if necessary..."
+cd `dirname "$0"`
+git pull 
+echo
+echo "Performing installation..."
+
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
 if [[ -z "$HOARD_SESSIONS_PATH" ]]; then

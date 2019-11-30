@@ -21,6 +21,9 @@ cd hoard
 ./install
 ```
 
+## Updating
+You can update the installation of hoard the same way you would install it.
+
 ## Configuration
 `hoard` should be 'plug and play', and wouldn't need to be configured to function.
 
