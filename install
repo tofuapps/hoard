@@ -15,14 +15,22 @@ fi
 
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
-touch "$HOME/.hoard_sessions"
-touch "$HOME/.hoard_bookmarks"
+if [[ -z "$HOARD_SESSIONS_PATH" ]]; then
+    export HOARD_SESSIONS_PATH="$HOME/.hoard_sessions"
+fi
+if [[ -z "$HOARD_BOOKMARKS_PATH" ]]; then
+    export HOARD_BOOKMARKS_PATH="$HOME/.hoard_bookmarks"
+fi
+touch "$HOARD_SESSIONS_PATH"
+touch "$HOARD_BOOKMARKS_PATH"
 
 file=
 if [ -f "$HOME/.bashrc" ]; then
     file="$HOME/.bashrc"
 elif [ -f "$HOME/.bash_profile" ]; then
     file="$HOME/.bash_profile"
+elif [ -f "$HOME/.profile" ]; then
+    file="$HOME/.profile"
 fi
 
 if [[ -z "$file" ]]; then
