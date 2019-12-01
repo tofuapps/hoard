@@ -23,6 +23,7 @@ if [[ -z "$HOARD_BOOKMARKS_PATH" ]]; then
 fi
 rm "$HOARD_SESSIONS_PATH" >> /dev/null 2>&1
 rm "$HOARD_BOOKMARKS_PATH" >> /dev/null 2>&1
+echo "Deleted session and bookmark data."
 
 
 
