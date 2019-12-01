@@ -6,20 +6,36 @@ if [ "$(uname)" == "Darwin" ]; then
     INSTALL_DIR="/usr/local"
 fi
 
+
+
 echo "We'll be uninstalling hoard ($INSTALL_DIR/bin/hoard) and all related files. [ctrl-c to cancel]"
 sleep 2
 
 (rm $INSTALL_DIR/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at $INSTALL_DIR/bin/hoard")
+
+
+
+if [[ -z "$HOARD_SESSIONS_PATH" ]]; then
+    export HOARD_SESSIONS_PATH="$HOME/.hoard_sessions"
+fi
+if [[ -z "$HOARD_BOOKMARKS_PATH" ]]; then
+    export HOARD_BOOKMARKS_PATH="$HOME/.hoard_bookmarks"
+fi
+rm "$HOARD_SESSIONS_PATH" >> /dev/null 2>&1
+rm "$HOARD_BOOKMARKS_PATH" >> /dev/null 2>&1
+
+
 
 file=
 if [ -f "$HOME/.bashrc" ]; then
     file="$HOME/.bashrc"
 elif [ -f "$HOME/.bash_profile" ]; then
     file="$HOME/.bash_profile"
+elif [ -f "$HOME/.profile" ]; then
+    file="$HOME/.profile"
 fi
 
-rm ~/.hoard_sessions >> /dev/null 2>&1
-rm ~/.hoard_bookmarks >> /dev/null 2>&1
+
 
 if [[ -z "$file" ]]; then
     echo "We've removed everything related to 'hoard'."
