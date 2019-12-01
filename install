@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#Get installation directory
 INSTALL_DIR="$HOME"
 if [ "$(uname)" == "Darwin" ]; then
     INSTALL_DIR="/usr/local"
@@ -7,20 +8,44 @@ fi
 
 mkdir "$INSTALL_DIR/bin/" >> /dev/null 2>&1
 
+#Read flags
+while getopts 'dy' flag; do
+    case "${flag}" in
+        d) d_flag='true';;
+        y) y_flag='true';;
+        *) ;;
+    esac
+done
+
+#Warning that hoard is not being installed but rather updated. Can be overriden with the -y flag.
 if [ -f "$INSTALL_DIR/bin/hoard" ]; then
-    echo "We'll be updating the installation of hoard at $INSTALL_DIR/bin/hoard. [ctrl-c to cancel]"
-    sleep 2
-    rm $INSTALL_DIR/bin/hoard
+    if [[ "$y_flag" != "true" ]]; then
+        echo "We'll be updating the installation of hoard at $INSTALL_DIR/bin/hoard. [ctrl-c to cancel]"
+        sleep 2
+    else
+        echo "Updating installation of hoard at $INSTALL_DIR/bin/hoard."
+    fi
 fi
 
-echo "Updating if necessary..."
-cd `dirname "$0"`
-git pull 
+#Attempts to pull updates from the hoard git repository. Can be disabled with the debug -d flag.
+if [[ "$d_flag" != "true" ]]; then
+    echo "Pulling new updates from repository if necessary..."
+    cd `dirname "$0"`
+    git pull
+    $0 -d -y
+    exit $?
+fi
+
+#Install hoard by linking the hoard file here with the one in bin. This behaviour is for easier debugging of any bugs which may have occured.
 echo
 echo "Performing installation..."
 
+if [ -f "$INSTALL_DIR/bin/hoard" ]; then
+    rm $INSTALL_DIR/bin/hoard
+fi
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
+#Define and create a file at the user data file paths, if they're not already defined by the user.
 if [[ -z "$HOARD_SESSIONS_PATH" ]]; then
     export HOARD_SESSIONS_PATH="$HOME/.hoard_sessions"
 fi
@@ -30,6 +55,8 @@ fi
 touch "$HOARD_SESSIONS_PATH"
 touch "$HOARD_BOOKMARKS_PATH"
 
+
+#Get the user's bash profile path.
 file=
 if [ -f "$HOME/.bashrc" ]; then
     file="$HOME/.bashrc"
@@ -40,10 +67,11 @@ elif [ -f "$HOME/.profile" ]; then
 fi
 
 if [[ -z "$file" ]]; then
-    :
+    #Inform the user about the need to source to be able to use it.
     echo "Please add '. hoard' to your .bashrc file or equivalent to use the 'hoard' command directly on every new terminal session."
     echo "Otherwise, you should run the hoard command '. hoard' to use the command 'hoard'."
 else
+    #Update the user's bash profile to automatically source the file if it's found.
     if [ "$(uname)" == "Darwin" ]; then
         sed -i '' "/\. .*hoard$/g" "$file"
     else 
@@ -51,9 +79,12 @@ else
     fi
     echo ". $INSTALL_DIR/bin/hoard" >> "$file"
     echo
+
+    #Inform that the current session doesn't have the updated or installed hoard command yet.
     echo "Note that you may need to restart your terminal session"
     echo "or run 'source hoard' in order to use the 'hoard' command immediately."
 fi
 
+#Yay, we're done! ^-^
 echo 
 echo "Installation complete!"

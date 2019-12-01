@@ -24,6 +24,10 @@ cd hoard
 ## Updating
 You can update the installation of hoard the same way you would install it.
 
+Note that by default: 
+- the installation script will automatically attempt to pull updates from this repository unless the debug flag `-d` is present. 
+- the script will pause for a moment before updating hoard so as the user can cancel the update with ^C. This can be overriden with the `-y` flag.
+
 ## Configuration
 `hoard` should be 'plug and play', and wouldn't need to be configured to function.
 
