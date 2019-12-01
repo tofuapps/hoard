@@ -15,10 +15,11 @@ macOS:
 
 
 ## Installation
-Easy, just clone this git repository, then run the install script like so:
+Easy, just clone this git repository, then run the install script and source `hoard`.
 ```
 cd hoard
 ./install
+source hoard
 ```
 
 ## Updating
@@ -26,15 +27,18 @@ You can update the installation of hoard the same way you would install it.
 
 Note that by default: 
 - the installation script will automatically attempt to pull updates from this repository unless the debug flag `-d` is present. 
-- the script will pause for a moment before updating hoard so as the user can cancel the update with ^C. This can be overriden with the `-y` flag.
+- the script will pause for a moment before updating hoard so as the user can cancel the update with `^C`. This can be overriden with the `-y` flag.
 
 ## Configuration
 `hoard` should be 'plug and play', and wouldn't need to be configured to function.
 
 The list of sessions are stored in `~/.hoard_sessions`, and list of bookmarks are stored in `~/.hoard_bookmarks`. If you would like to specify a new location to store these, assign and export the enviromental variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
+```
+export HOARD_SESSIONS_PATH=/path/to/sessions_file
+export HOARD_BOOKMARKS_PATH=/path/to/bookmarks_file
+```
 
 If you want `hoard` to automatically save each exited session, you can copy the following into your `.bashrc` (or equivalent).
-
 ```
 trap 'hoard s' EXIT
 ```
@@ -53,14 +57,22 @@ Sessions are stored in chronological order, accessibile via numeric indicies wit
 ### Bookmark Control
 Bookmarks are permanent forms of saving a directory for future use, by using a reference name. This allows you to open a bookmark to jump to a directory at anytime until you delete it.
 
-Bookmark names can be any string you like, but cannot start with a number.
+Bookmark names can be any string you like, but cannot be a number.
 
 - **lb** - List all saved hoard bookmarks
 - **o [NAME]** - Open hoard bookmark [NAME]
-- **x [NAME]** - Delete hoard bookmark [NAME]
-- **b [NAME]** - Bookmark current directory as [NAME]
+- **d [NAME]** - Delete hoard bookmark [NAME]
+- **s [NAME]** - Bookmark current directory as [NAME]
 
-\*\* If you mix up bookmarks and sessions by executing the wrong `hoard` command listed above, `hoard` can automatically perform corrections or request more info about the command you were trying to execute.
+### Miscellaneous
+\*\* Most commands are interchangable and come in many forms. Supported commands:
+
+```
+a|attach|o|open          - attaches <?>
+d|del|delete|rm|remove|x - deletes  <?>
+s|save                   - saves    <?> *session if no arguments, bookmark if argument is provided
+b|book|bookmark          - saves <bookmark>
+```
 
 ## Uninstallation
 Similar to the installation process, clone this repository (if you have not), then run the uninstall script like so:
