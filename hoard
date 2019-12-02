@@ -304,21 +304,23 @@ hoard() {
             echo "Usage: hoard COMMAND"
             echo "Simple terminal session/bookmark manager."
             echo
-            echo
             echo "COMMANDS:"
             echo 
             echo "- Session Control"
             echo "  ls - Lists all saved hoard sessions"
-            echo "  a [NUMBER] - Attach to hoard session [NUMBER]"
-            echo "  d [NUMBER] - Delete hoard session [NUMBER]"
-            echo "  s - Save current directory as a hoard session"
+            echo "  a  [NUMBER] - Attach to hoard session [NUMBER]"
+            echo "  rm [NUMBER] - Delete hoard session [NUMBER]"
+            echo "  s  - Save current directory as a hoard session"
             echo
             echo "- Bookmark Control"
             echo "  lb - Lists all saved hoard bookmarks"
-            echo "  o [NAME] - Open hoard bookmark [NAME]"
-            echo "  d [NAME] - Delete hoard bookmark [NAME]"
-            echo "  s [NAME] - Bookmark current directory as [NAME]"
+            echo "  o  [NAME] - Open hoard bookmark [NAME]"
+            echo "  rm [NAME] - Delete hoard bookmark [NAME]"
+            echo "  b  [NAME] - Bookmark current directory as [NAME]"
             echo  
+            echo "Note that most commands are interchangable between session and bookmark controls."
+            echo "e.g. 'o' can be used for attaching a session as well as 'a'"
+            echo "Check the README for more info."
             ;;
         *)
             echo "Error: invalid command."

@@ -50,9 +50,9 @@ Sessions are temporary forms of saving a directory. When you save a session and 
 Sessions are stored in chronological order, accessibile via numeric indicies with the oldest session starting from `1`.
 
 - **ls** - List all saved hoard sessions
-- **a [NUMBER]** - Attach to hoard session [NUMBER]
-- **d [NUMBER]** - Delete hoard session [NUMBER]
-- **s** - Save current directory as a hoard session
+- **a  [NUMBER]** - Attach to hoard session [NUMBER]
+- **rm [NUMBER]** - Delete hoard session [NUMBER]
+- **s**  - Save current directory as a hoard session
 
 ### Bookmark Control
 Bookmarks are permanent forms of saving a directory for future use, by using a reference name. This allows you to open a bookmark to jump to a directory at anytime until you delete it.
@@ -60,17 +60,19 @@ Bookmarks are permanent forms of saving a directory for future use, by using a r
 Bookmark names can be any string you like, but cannot be a number.
 
 - **lb** - List all saved hoard bookmarks
-- **o [NAME]** - Open hoard bookmark [NAME]
-- **d [NAME]** - Delete hoard bookmark [NAME]
-- **s [NAME]** - Bookmark current directory as [NAME]
+- **o  [NAME]** - Open hoard bookmark [NAME]
+- **rm [NAME]** - Delete hoard bookmark [NAME]
+- **b  [NAME]** - Bookmark current directory as [NAME]
 
 ### Miscellaneous
-\*\* Most commands are interchangable and come in many forms. Supported commands:
+\* Most commands above are actually interchangable and come in many forms. All supported commands include:
 
 ```
-a|attach|o|open          - attaches <?>
-d|del|delete|rm|remove|x - deletes  <?>
-s|save                   - saves    <?> *session if no arguments, bookmark if argument is provided
+ls                       - lists saved sessions
+lb                       - lists saved bookmarks
+a|attach|o|open          - attaches or opens <?>
+d|del|delete|rm|remove|x - deletes <?>
+s|save                   - saves a session if no arguments fed, a bookmark if an argument is provided
 b|book|bookmark          - saves <bookmark>
 ```
 
