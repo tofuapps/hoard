@@ -14,16 +14,14 @@ macOS:
 - The directory /usr/local/bin/ needs to be available and used for storing binaries. This is usually present if you already installed `homebrew`.
 
 
-## Installation
-Easy, just clone this git repository, then run the install script and source `hoard`.
+## Installation & Updating
+Easy, just clone this git repository, then run the install script and source `hoard`. You can update the installation of hoard the same way you would install it.
+
 ```
 cd hoard
 ./install
 source hoard
 ```
-
-## Updating
-You can update the installation of hoard the same way you would install it.
 
 Note that by default: 
 - the installation script will automatically attempt to pull updates from this repository unless the debug flag `-d` is present. 
@@ -32,7 +30,7 @@ Note that by default:
 ## Configuration
 `hoard` should be 'plug and play', and wouldn't need to be configured to function.
 
-The list of sessions are stored in `~/.hoard_sessions`, and list of bookmarks are stored in `~/.hoard_bookmarks`. If you would like to specify a new location to store these, assign and export the enviromental variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
+The list of sessions are stored in `~/.hoard_sessions`, and list of bookmarks are stored in `~/.hoard_bookmarks`. If you would like to specify a new location to store these, assign and export the environment variables `HOARD_SESSIONS_PATH` and/or `HOARD_BOOKMARKS_PATH`, pointing to your designated paths. Note that as of now, the two cannot be the same file.
 ```
 export HOARD_SESSIONS_PATH=/path/to/sessions_file
 export HOARD_BOOKMARKS_PATH=/path/to/bookmarks_file
