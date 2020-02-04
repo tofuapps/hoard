@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-
 ######### SOURCED FILE DETECTION ##########
 # Try to execute a `return` statement,
 # but do it in a sub-shell and catch the results.
 # If this script isn't sourced, that will raise an error.
 $(return >/dev/null 2>&1)
 
-if [ "$?" -eq "0" ]
+if [[ "$status" == "0" ]]
 then
     #file is sourced
     :
-else
-    echo "This tool can only be run after it's sourced. Try running 'source hoard' before running 'hoard'.";
+elif [[ -n "$1" ]]
+then
+    echo "Note: This tool can only be run after it's sourced. Try running 'source hoard' before running 'hoard'.";
 fi
 ###########################################
 
@@ -145,18 +145,19 @@ hoard() {
             echo
 
             echo "Your sessions:"
-            printSessionsSaved $HOARD_SESSIONS_PATH
-            res=$(( 0 + $? ))
+            printSessionsSaved "$HOARD_SESSIONS_PATH"
+            res=$(( 0 + $status ))
             echo
             echo "Your bookmarks:"
-            bookmarksSaved $HOARD_BOOKMARKS_PATH
-            res=$(( $res + $? ))
+            bookmarksSaved "$HOARD_BOOKMARKS_PATH"
+            res=$(( $res + $status ))
             echo
 
             while [[ -z "$SELECTED_NAME" ]]
             do
                 if [[ "$res" != "2" ]]; then
-                    read -p "Which session or bookmark would you like to use for 'hoard $1'? [ctrl-c to cancel]: " value
+                    echo "Which session or bookmark would you like to use for 'hoard $1'? [ctrl-c to cancel]: "
+                    read value
                     SELECTED_NAME=$value
                 else
                     return 1;
@@ -168,12 +169,12 @@ hoard() {
 
 
     #save if value is a number
-    is_number=
-    case $SELECTED_NAME in
-    ''|*[!0-9]*) is_number='false' ;;
-    *) is_number='true' ;;
-    esac
-
+    is_number="nil"
+    if echo "$SELECTED_NAME" | egrep -q '^[0-9]+$'; then
+        is_number="true"
+    else
+        is_number="false"
+    fi
 
     #run command
     case $SELECTED_COMMAND in
@@ -190,9 +191,7 @@ hoard() {
             ;;
 
         "a"|"attach"|"o"|"open")
-
-            if [ "$is_number" == "true" ]; then
-
+            if [[ "$is_number" == "true" ]]; then
                 if hasSessionSaved $HOARD_SESSIONS_PATH $SELECTED_NAME; then :
                 else
                     echo "session $SELECTED_NAME not found."
@@ -204,34 +203,32 @@ hoard() {
                 session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
                 cd "$session"
 
-                if [ "$(uname)" == "Darwin" ]; then
+                if [[ "$(uname)" == "Darwin" ]]; then
                     sed -i '' "`echo "$SELECTED_NAME"`d" $HOARD_SESSIONS_PATH
                 else
                     sed -i "`echo "$SELECTED_NAME"`d" $HOARD_SESSIONS_PATH
                 fi
 
             else
-
                 session=$(bookmarksSaved $HOARD_BOOKMARKS_PATH $SELECTED_NAME -s)
-                if [ ! -z "$session" ]; then
+                if [[ ! -z "$session" ]]; then
                     echo "opening bookmark $session"
                     cd "$session"
                 else 
                     echo "bookmark $SELECTED_NAME not found."
                 fi
-
             fi
             ;;
 
         "rm"|"remove"|"d"|"del"|"delete"|"x")
 
-            if [ "$is_number" == "true" ]; then
+            if [[ "$is_number" == "true" ]]; then
             
                 if hasSessionSaved $HOARD_SESSIONS_PATH $SELECTED_NAME; then :
 
                     line=$(cat $HOARD_SESSIONS_PATH | sed -n "`echo "$SELECTED_NAME"`p")
                     echo "deleting $line"
-                    if [ "$(uname)" == "Darwin" ]; then
+                    if [[ "$(uname)" == "Darwin" ]]; then
                         sed -i '' "`echo "$SELECTED_NAME"`d" $HOARD_SESSIONS_PATH
                     else
                         sed -i "`echo "$SELECTED_NAME"`d" $HOARD_SESSIONS_PATH
@@ -254,7 +251,7 @@ hoard() {
 
                 line=$(cat $HOARD_BOOKMARKS_PATH | sed -n "`echo "$i"`p")
                 echo "deleting bookmark $line"
-                if [ "$(uname)" == "Darwin" ]; then
+                if [[ "$(uname)" == "Darwin" ]]; then
                     sed -i '' "`echo "$i"`d" $HOARD_BOOKMARKS_PATH
                 else
                     sed -i "`echo "$i"`d" $HOARD_BOOKMARKS_PATH
@@ -283,7 +280,7 @@ hoard() {
                     fi
                 done
 
-                if [ "$is_number" == "true" ]; then
+                if [[ "$is_number" == "true" ]]; then
                     echo "Error: bookmark name is a number."
                     return 1
                 fi
