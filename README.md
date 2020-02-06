@@ -1,11 +1,15 @@
 # hoard
 
-A simple terminal directory session manager. Designed to work in `bash` on Linux and macOS.
+A simple terminal directory session manager. Designed to work with `bash`, `ksh`, and `zsh` on Linux and macOS.
 
 This script allows you to easily save 'sessions' in the form of a pointer to a directory you want to access in the future. It can be a temporary session, or a permanent bookmark. This frees you the need to `cd` everywhere to go to that commonly-used directory you need. Just open a bookmark or attach to a session and you're good to go!
 
 
 ## Prerequisites
+
+Your login shell should be either `bash`, `ksh`, or `zsh`.
+
+Note that the installation and uninstallation scripts use `bash`, thus it needs to be present, but need not be your current shell.
 
 Linux:
 - The directory ~/bin/ needs to be available and used for storing binaries. This is usually already present on most systems.
