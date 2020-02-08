@@ -2,9 +2,6 @@
 
 #Get installation directory
 INSTALL_DIR="$HOME"
-if [[ "$(uname)" == "Darwin" ]]; then
-    INSTALL_DIR="/usr/local"
-fi
 
 mkdir "$INSTALL_DIR/bin/" >> /dev/null 2>&1
 
@@ -40,9 +37,19 @@ fi
 echo
 echo "Performing installation..."
 
+#Delete previous version
 if [[ -f "$INSTALL_DIR/bin/hoard" ]]; then
     rm $INSTALL_DIR/bin/hoard
 fi
+
+#Clear deprecated installation directory
+if [[ "$(uname)" == "Darwin" ]]; then
+    if [[ -f "/usr/local/bin/hoard" ]]; then
+        rm "/usr/local/bin/hoard"
+    fi
+fi
+
+#Install the script by linking to the install directory.
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
 #Define and create a file at the user data file paths, if they're not already defined by the user.
@@ -55,11 +62,12 @@ fi
 touch "$HOARD_SESSIONS_PATH"
 touch "$HOARD_BOOKMARKS_PATH"
 
+
+
+#Get the user's shell profile path.
 shell() {
     echo "$(basename $SHELL)"
 }
-
-#Get the user's bash profile path.
 
 file=
 case "$(shell)" in
@@ -80,6 +88,7 @@ case "$(shell)" in
     ;;
 esac
 
+#Update with final changes.
 if [[ -z "$file" ]]; then
     #Inform the user about the need to source to be able to use it.
     echo
@@ -88,6 +97,11 @@ if [[ -z "$file" ]]; then
     echo "Please add 'source $INSTALL_DIR/bin/hoard' to your shell startup script to use the 'hoard' command directly on every new terminal session."
     echo "Otherwise, you should run the hoard command 'source $INSTALL_DIR/bin/hoard' to use the command 'hoard'."
 else
+    #Include installation path in shell profile if necessary
+    if [[ -z $(echo $PATH | tr ":" "\n" | grep $HOME/bin) ]]; then
+        echo "export PATH=\$HOME/bin:\$PATH" >> "$file"
+    fi
+
     #Update the user's bash profile to automatically source the file if it's found.
     if [[ "$(uname)" == "Darwin" ]]; then
         sed -i '' "/\. .*hoard$/g" "$file"
@@ -100,8 +114,13 @@ else
     echo
 
     #Inform that the current session doesn't have the updated or installed hoard command yet.
-    echo "Note that you may need to restart your $(shell) terminal session"
-    echo "or run 'source $INSTALL_DIR/bin/hoard' in order to use the 'hoard' command immediately."
+    if [[ -z $(echo $PATH | tr ":" "\n" | grep $HOME/bin) ]]; then
+        echo "Note that '$HOME/bin' is added to your PATH as it was not present."
+        echo "You'll need to run 'source $file' or restart your $(shell) session to use 'hoard'."
+    else
+        echo "Note that you may need to restart your $(shell) session"
+        echo "or run 'source $INSTALL_DIR/bin/hoard' in order to use the 'hoard' command immediately."
+    fi
 fi
 
 #Yay, we're done! ^-^

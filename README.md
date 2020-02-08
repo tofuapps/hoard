@@ -7,16 +7,9 @@ This script allows you to easily save 'sessions' in the form of a pointer to a d
 
 ## Prerequisites
 
-Your login shell should be either `bash`, `ksh`, or `zsh`.
+Your login shell should be the latest versions of `bash`, `ksh`, or `zsh`.
 
 Note that the installation and uninstallation scripts use `bash`, thus it needs to be present, but need not be your current shell.
-
-Linux:
-- The directory ~/bin/ needs to be available and used for storing binaries. This is usually already present on most systems.
-
-macOS:
-- The directory /usr/local/bin/ needs to be available and used for storing binaries. This is usually present if you already installed `homebrew`.
-
 
 ## Installation
 Easy, just clone this git repository, then run the install script and source `hoard`.
@@ -25,6 +18,8 @@ cd hoard
 ./install
 source hoard
 ```
+
+This will install `hoard` in your `~/bin` directory.
 
 ## Updating
 You can update the installation of hoard the same way you would install it.
