@@ -81,3 +81,10 @@ Similar to the installation process, clone this repository (if you have not), th
 cd hoard
 ./uninstall
 ```
+
+Note that the uninstall script does not remove your sessions and bookmarks data. To delete them, just run:
+
+```
+rm "$HOARD_SESSIONS_PATH"
+rm "$HOARD_BOOKMARKS_PATH"
+```
