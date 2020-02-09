@@ -3,7 +3,7 @@
 
 INSTALL_DIR="$HOME"
 
-echo "We'll be uninstalling hoard ($INSTALL_DIR/bin/hoard) and all related files and user data. [ctrl-c to cancel]"
+echo "We'll be uninstalling hoard ($INSTALL_DIR/bin/hoard) and all related files. User data won't be deleted. [ctrl-c to cancel]"
 sleep 2
 
 #Remove installed script

@@ -125,4 +125,6 @@ fi
 
 #Yay, we're done! ^-^
 echo 
+echo "Check README.md for configuration info."
+echo 
 echo "Installation complete!"

@@ -14,13 +14,13 @@ Note that the installation and uninstallation scripts use `bash`, thus it needs 
 ## Installation & Updating
 Easy, just clone this git repository, then run the install script and source `hoard`. You can update the installation of hoard the same way you would install it.
 
+This will install `hoard` in your `~/bin` directory.
+
 ```
 cd hoard
 ./install
-source hoard
+source ~/bin/hoard
 ```
-
-This will install `hoard` in your `~/bin` directory.
 
 ## Updating
 You can update the installation of hoard the same way you would install it.
