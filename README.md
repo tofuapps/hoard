@@ -1,18 +1,15 @@
 # hoard
 
-A simple terminal directory session manager. Designed to work in `bash` on Linux and macOS.
+A simple terminal directory session manager. Designed to work with `bash`, `ksh`, and `zsh` on Linux and macOS.
 
 This script allows you to easily save 'sessions' in the form of a pointer to a directory you want to access in the future. It can be a temporary session, or a permanent bookmark. This frees you the need to `cd` everywhere to go to that commonly-used directory you need. Just open a bookmark or attach to a session and you're good to go!
 
 
 ## Prerequisites
 
-Linux:
-- The directory ~/bin/ needs to be available and used for storing binaries. This is usually already present on most systems.
+Your login shell should be the latest versions of `bash`, `ksh`, or `zsh`.
 
-macOS:
-- The directory /usr/local/bin/ needs to be available and used for storing binaries. This is usually present if you already installed `homebrew`.
-
+Note that the installation and uninstallation scripts use `bash`, thus it needs to be present, but need not be your current shell.
 
 ## Installation & Updating
 Easy, just clone this git repository, then run the install script and source `hoard`. You can update the installation of hoard the same way you would install it.
@@ -22,6 +19,11 @@ cd hoard
 ./install
 source hoard
 ```
+
+This will install `hoard` in your `~/bin` directory.
+
+## Updating
+You can update the installation of hoard the same way you would install it.
 
 Note that by default: 
 - the installation script will automatically attempt to pull updates from this repository unless the debug flag `-d` is present. 
@@ -79,4 +81,11 @@ Similar to the installation process, clone this repository (if you have not), th
 ```
 cd hoard
 ./uninstall
+```
+
+Note that the uninstall script does not remove your sessions and bookmarks data. To delete them, just run:
+
+```
+rm "$HOARD_SESSIONS_PATH"
+rm "$HOARD_BOOKMARKS_PATH"
 ```
