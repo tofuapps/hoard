@@ -223,7 +223,7 @@ hoard() {
         "rm"|"remove"|"d"|"del"|"delete"|"x")
 
             if [[ "$is_number" == "true" ]]; then
-            
+
                 if hasSessionSaved $HOARD_SESSIONS_PATH $SELECTED_NAME; then :
 
                     line=$(cat $HOARD_SESSIONS_PATH | sed -n "`echo "$SELECTED_NAME"`p")
@@ -240,7 +240,7 @@ hoard() {
                 fi
 
             else
-                
+
                 i=$(bookmarksSaved $HOARD_BOOKMARKS_PATH $SELECTED_NAME -i)
 
                 if [[ "$i" == "-1" ]]
@@ -272,7 +272,8 @@ hoard() {
 
             else
                 while [[ -z $SELECTED_NAME ]]; do
-                    read -p "Please type your bookmark name to save as [ctrl-c to cancel] " value
+                    echo "Please type your bookmark name to save as [ctrl-c to cancel] " 
+                    read value
                     SELECTED_NAME=$value
                     if [[ -z $SELECTED_NAME ]]; then
                         echo "You did not enter a value."
@@ -280,8 +281,15 @@ hoard() {
                     fi
                 done
 
+                is_number="nil"
+                if echo "$SELECTED_NAME" | egrep -q '^[0-9]+$'; then
+                    is_number="true"
+                else
+                    is_number="false"
+                fi
+
                 if [[ "$is_number" == "true" ]]; then
-                    echo "Error: bookmark name is a number."
+                    echo "Error: bookmark name cannot be a number."
                     return 1
                 fi
 
