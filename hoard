@@ -6,7 +6,7 @@
 # If this script isn't sourced, that will raise an error.
 $(return >/dev/null 2>&1)
 
-if [[ "$status" == "0" ]]
+if [[ "$?" == "0" ]]
 then
     #file is sourced
     :
@@ -146,11 +146,11 @@ hoard() {
 
             echo "Your sessions:"
             printSessionsSaved "$HOARD_SESSIONS_PATH"
-            res=$(( 0 + $status ))
+            res=$(( 0 + $? ))
             echo
             echo "Your bookmarks:"
             bookmarksSaved "$HOARD_BOOKMARKS_PATH"
-            res=$(( $res + $status ))
+            res=$(( $res + $? ))
             echo
 
             while [[ -z "$SELECTED_NAME" ]]
