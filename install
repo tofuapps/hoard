@@ -6,9 +6,9 @@ INSTALL_DIR="$HOME"
 mkdir "$INSTALL_DIR/bin/" >> /dev/null 2>&1
 
 #Read flags
-while getopts 'dy' flag; do
+while getopts 'uy' flag; do
     case "${flag}" in
-        d) d_flag='true';;
+        u) u_flag='true';;
         y) y_flag='true';;
         *) ;;
     esac
@@ -25,15 +25,15 @@ if [[ -f "$INSTALL_DIR/bin/hoard" ]]; then
 fi
 
 #Attempts to pull updates from the hoard git repository. Can be disabled with the debug -d flag.
-if [[ "$d_flag" != "true" ]]; then
+if [[ "$u_flag" == "true" ]]; then
     echo "Pulling new updates from repository if necessary..."
     cd `dirname "$0"`
     git pull
-    $0 -d -y
+    $0 -y
     exit $?
 fi
 
-#Install hoard by linking the hoard file here with the one in bin. This behaviour is for easier debugging of any bugs which may have occured.
+#Install hoard by linking the hoard file here with the one in bin.
 echo
 echo "Performing installation..."
 
@@ -49,7 +49,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     fi
 fi
 
-#Install the script by linking to the install directory.
+#Install the script by hard-linking to the install directory.
 (ln `dirname "$0"`/hoard $INSTALL_DIR/bin/hoard && echo "Installed 'hoard' at $INSTALL_DIR/bin/hoard") || (echo "Installation failure" && exit 1)
 
 #Define and create a file at the user data file paths, if they're not already defined by the user.
@@ -71,21 +71,21 @@ shell() {
 
 file=
 case "$(shell)" in
-"bash")
-    if [[ -f "$HOME/.bashrc" ]]; then
-        file="$HOME/.bashrc"
-    elif [[ -f "$HOME/.bash_profile" ]]; then
-        file="$HOME/.bash_profile"
-    elif [[ -f "$HOME/.profile" ]]; then
-        file="$HOME/.profile"
-    fi
-    ;;
-"zsh")
-    file="$HOME/.zshrc"
-    ;;
-"ksh")
-    file="$HOME/.kshrc"
-    ;;
+    "bash")
+        if [[ -f "$HOME/.bashrc" ]]; then
+            file="$HOME/.bashrc"
+        elif [[ -f "$HOME/.bash_profile" ]]; then
+            file="$HOME/.bash_profile"
+        elif [[ -f "$HOME/.profile" ]]; then
+            file="$HOME/.profile"
+        fi
+        ;;
+    "zsh")
+        file="$HOME/.zshrc"
+        ;;
+    "ksh")
+        file="$HOME/.kshrc"
+        ;;
 esac
 
 #Update with final changes.
@@ -106,7 +106,7 @@ else
     if [[ "$(uname)" == "Darwin" ]]; then
         sed -i '' "/\. .*hoard$/g" "$file"
         sed -i '' "/^source .*hoard$/g" "$file"
-    else 
+    else
         sed -i "/\. .*hoard$/g" "$file"
         sed -i "/^source .*hoard$/g" "$file"
     fi
@@ -124,7 +124,7 @@ else
 fi
 
 #Yay, we're done! ^-^
-echo 
+echo
 echo "Check README.md for configuration info."
-echo 
+echo
 echo "Installation complete!"

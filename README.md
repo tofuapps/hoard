@@ -22,11 +22,13 @@ cd hoard
 source ~/bin/hoard
 ```
 
+Note: `hoard` shorthands might conflict with other commands or aliases you may have. Check the [Shorthands](#shorthands) section for details.
+
 ## Updating
 You can update the installation of hoard the same way you would install it.
 
-Note that by default: 
-- the installation script will automatically attempt to pull updates from this repository unless the debug flag `-d` is present. 
+Note that by default:
+- the installation script can pull updates from this repository if the upstream flag `-u` is present.
 - the script will pause for a moment before updating hoard so as the user can cancel the update with `^C`. This can be overriden with the `-y` flag.
 
 ## Configuration
@@ -75,6 +77,12 @@ d|del|delete|rm|remove|x - deletes <?>
 s|save                   - saves a session if no arguments fed, a bookmark if an argument is provided
 b|book|bookmark          - saves <bookmark>
 ```
+
+### Shorthands
+Shorthands are available for faster hoard usage. Arguments like bookmark names can be provided.
+- `h`: equivalent to `hoard`. However, automatically lists all sessions and bookmarks if no arguments are provided.
+- `a`: equivalent to `hoard attach`.
+- `o`: equivalent to `hoard open`.
 
 ## Uninstallation
 Similar to the installation process, clone this repository (if you have not), then run the uninstall script like so:
