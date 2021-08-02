@@ -105,7 +105,6 @@ hoard() {
             let "i++"
         done < "$1"
 
-
         #If index is never updated, the file is empty. 
         #Indicate to user that no sessions are found.
         if [[ "$i" == "1" && -z "$2" && -z "$3" ]];
@@ -322,9 +321,16 @@ hoard() {
             echo "  o  [NAME] - Open hoard bookmark [NAME]"
             echo "  rm [NAME] - Delete hoard bookmark [NAME]"
             echo "  b  [NAME] - Bookmark current directory as [NAME]"
-            echo  
+            echo
+            echo "SHORTHAND:"
+            echo "'h': aliases to 'hoard' if at least one argument is provided,"
+            echo "     otherwise to 'hoard ls; hoard lb'"
+            echo "'a': aliases to 'hoard attach'"
+            echo "'o': aliases to 'hoard open'"
+            echo
             echo "Note that most commands are interchangable between session and bookmark controls."
             echo "e.g. 'o' can be used for attaching a session as well as 'a'"
+            echo
             echo "Check the README for more info."
             ;;
         *)
@@ -333,3 +339,22 @@ hoard() {
             ;;
     esac
 }
+
+h() {
+    if [[ -z $1 ]]; then
+        hoard ls
+        hoard lb
+    else
+        hoard $1 $2
+    fi
+}
+
+a() {
+    hoard a $1
+}
+
+o() {
+    hoard o $1
+}
+
+
