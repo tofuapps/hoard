@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh 
 
 
 INSTALL_DIR="$HOME"
@@ -10,25 +10,23 @@ sleep 2
 (rm $INSTALL_DIR/bin/hoard >> /dev/null 2>&1 && echo "Uninstalled 'hoard' previously located at $INSTALL_DIR/bin/hoard")
 
 #Clear deprecated installation directory
-if [[ "$(uname)" == "Darwin" ]]; then
-    if [[ -f "/usr/local/bin/hoard" ]]; then
+if [ "`uname`" == "Darwin" ]; then
+    if [ -f "/usr/local/bin/hoard" ]; then
         rm "/usr/local/bin/hoard"
     fi
 fi
 
 #Retrieve user shell profile
-shell() {
-    echo "$(basename $SHELL)"
-}
+shell="`basename $SHELL`"
 
 file=
-case "$(shell)" in
+case "$shell" in
 "bash")
-    if [[ -f "$HOME/.bashrc" ]]; then
+    if [ -f "$HOME/.bashrc" ]; then
         file="$HOME/.bashrc"
-    elif [[ -f "$HOME/.bash_profile" ]]; then
+    elif [ -f "$HOME/.bash_profile" ]; then
         file="$HOME/.bash_profile"
-    elif [[ -f "$HOME/.profile" ]]; then
+    elif [ -f "$HOME/.profile" ]; then
         file="$HOME/.profile"
     fi
     ;;
@@ -42,17 +40,17 @@ esac
 
 
 #Remove config from shell profile
-if [[ -z "$file" ]]; then
+if [ -z "$file" ]; then
     echo "We've removed everything related to 'hoard'."
     echo "However, please remove 'source hoard' from your startup script if you ever added that manually."
 else
-    if [[ "$(uname)" == "Darwin" ]]; then
+    if [ "`uname`" == "Darwin" ]; then
         sed -i '' "/\. .*hoard$/g" "$file"
         sed -i '' "/^source .*hoard$/g" "$file"
     else 
         sed -i "/\. .*hoard$/g" "$file"
         sed -i "/^source .*hoard$/g" "$file"
     fi
-    echo "We've removed everything related to 'hoard' installed for $(shell)"
+    echo "We've removed everything related to 'hoard' installed for $shell"
 fi
 echo "Please restart all existing terminal windows to completely remove the ability to run 'hoard'."
