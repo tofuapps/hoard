@@ -13,7 +13,7 @@ then
 elif [ -n "$1" ]
 then
     echo "Note: This tool can only be run after it's sourced. Try running: "
-    echo "    . \"\$(which -a hoard | tail -n 1)\""
+    echo "    . \`which -a hoard | tail -n 1\`"
     echo "before running 'hoard'.";
 fi
 ###########################################
@@ -38,10 +38,10 @@ hoard() {
         #list all sessions saved by reading from file.
         i=1
         while IFS= read -r line; do
-            timestamp=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p')
-            session=$(echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p')
-            echo "    $i: $timestamp $(echo "$session" | tail -c 40)"
-            i=$((i+1))
+            timestamp=`echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\1/p'`
+            session=`echo "$line" | sed -n 's/\(\[[^]]*\]\) *\(.*\)/\2/p'`
+            echo "    $i: $timestamp `echo "$session" | tail -c 40`"
+            i=`expr $i+1`
         done < "$1"
 
         #If index is never updated, the file is empty.
@@ -67,7 +67,7 @@ hoard() {
                 return 0
             fi
 
-            i=$((i+1))
+            i=`expr $i+1`
         done < "$1"
 
         return 1
@@ -104,7 +104,7 @@ hoard() {
                 fi
             fi
 
-            i=$((i+1))
+            i=`expr $i+1`
         done < "$1"
 
         #If index is never updated, the file is empty.
@@ -147,11 +147,11 @@ hoard() {
 
             echo "Your sessions:"
             printSessionsSaved "$HOARD_SESSIONS_PATH"
-            res=$(( 0 + $? ))
+            res=`expr 0+$?`
             echo
             echo "Your bookmarks:"
             bookmarksSaved "$HOARD_BOOKMARKS_PATH"
-            res=$(( $res + $? ))
+            res=`expr $res+$?`
             echo
 
             while [ -z "$SELECTED_NAME" ]
