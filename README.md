@@ -1,28 +1,34 @@
 # hoard
 
-A simple terminal directory session manager. Designed to work with `bash`, `ksh`, and `zsh` on Linux and macOS.
+A simple terminal directory session manager. Designed to work on most POSIX compliant shells across Linux and macOS, such as `bash`, `zsh`, `dash`, `ksh`, etc.
 
 This script allows you to easily save 'sessions' in the form of a pointer to a directory you want to access in the future. It can be a temporary session, or a permanent bookmark. This frees you the need to `cd` everywhere to go to that commonly-used directory you need. Just open a bookmark or attach to a session and you're good to go!
 
 
 ## Prerequisites
 
-Your login shell should be the latest versions of `bash`, `ksh`, or `zsh`.
+Your login shell should be a modern POSIX compliant shell, ideally with the ability to run scripts on startup. Examples include `bash`, `ksh`, `dash`, `zsh`, etc.
 
-Note that the installation and uninstallation scripts use `bash`, thus it needs to be present, but need not be your current shell.
+## Installation
 
-## Installation & Updating
-Easy, just clone this git repository, then run the install script and source `hoard`. You can update the installation of hoard the same way you would install it.
+Easy, just clone this git repository. Then, run the install script and source `hoard`.
 
 This will install `hoard` in your `~/bin` directory.
 
 ```
 cd hoard
 ./install
-source ~/bin/hoard
+. ~/bin/hoard
 ```
 
+(This automatic installation procedure works for `bash`, `ksh`, and `zsh`. If you prefer an alternative installation directory, or do not use `bash`, `ksh`, `zsh`, refer to manual installation instructions.)
+
 Note: `hoard` shorthands might conflict with other commands or aliases you may have. Check the [Shorthands](#shorthands) section for details.
+
+## Manual Installation
+Simply make sure to copy the script somewhere and source the script in your shell startup profile.
+
+For instance, copy the script to a location `\path\to\hoard`, then source it by running `. \path\to\hoard` in your shell startup profile.
 
 ## Updating
 You can update the installation of hoard the same way you would install it.
